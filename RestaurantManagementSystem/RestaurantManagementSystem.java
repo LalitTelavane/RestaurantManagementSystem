@@ -13,10 +13,12 @@ import java.util.List;
 public class RestaurantManagementSystem extends JFrame {
     private List<Product> products;
     private List<Product> orderedProducts;
-    private JTextField searchField; // Search bar
-    private JTextArea orderTextArea;
+    private JTextField searchField; // Search Bar
+    private JTextArea orderTextArea; //Order TextArea
     private JLabel totalEarningsLabel; // Total earnings label
     private double totalEarnings; // Total earnings
+    private JLabel totalCustomersLabel; // Total number of customers label
+    private int totalCustomers; // Total number of customers
     private JPanel productPanel; // Product panel to display products
 
     public RestaurantManagementSystem() {
@@ -24,20 +26,24 @@ public class RestaurantManagementSystem extends JFrame {
         products = new ArrayList<>();
         orderedProducts = new ArrayList<>();
         totalEarnings = 0.0;
+        totalCustomers = 0;
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1860, 1020);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         productPanel = new JPanel(new GridLayout(0, 3)); // Initialize the product panel
-        setTitle("Menu Items");
 
         JScrollPane productScrollPane = new JScrollPane(productPanel);
 
-        productScrollPane.setColumnHeaderView(new JLabel("Menu Items:"));
+        // Modify font size for the title or header
+        JLabel titleLabel = new JLabel("BVP Snacks Corner:");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Change font size to 24
+        productScrollPane.setColumnHeaderView(titleLabel);
 
-        searchField = new JTextField(20); // Search bar with a width of 20 columns
+        searchField = new JTextField(20); // Search bar with a width of 15 columns
+        searchField.setPreferredSize(new Dimension(110, 30)); // Set search bar size
         searchField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -46,6 +52,7 @@ public class RestaurantManagementSystem extends JFrame {
         });
 
         JButton addProductButton = new JButton("Add Product");
+        addProductButton.setPreferredSize(new Dimension(110, 30)); // Set preferred size for buttons
         addProductButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,6 +61,7 @@ public class RestaurantManagementSystem extends JFrame {
         });
 
         JButton deleteProductButton = new JButton("Delete Product");
+        deleteProductButton.setPreferredSize(new Dimension(110, 30)); // Set preferred size for buttons
         deleteProductButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -62,19 +70,24 @@ public class RestaurantManagementSystem extends JFrame {
         });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(searchField); // Add search bar to the button panel
-        buttonPanel.add(addProductButton);
-        buttonPanel.add(deleteProductButton);
+        buttonPanel.add(searchField); // Add Search Bar To The Button Panel
+        buttonPanel.add(addProductButton); //Adds Add Product Button
+        buttonPanel.add(deleteProductButton); //Adds Delete Button
 
         // Order Panel
         JPanel orderPanel = new JPanel(new BorderLayout());
         orderTextArea = new JTextArea(30, 50); // Increase rows and columns
         orderTextArea.setEditable(false);
         JScrollPane orderScrollPane = new JScrollPane(orderTextArea);
-        orderPanel.add(new JLabel("Orders: "), BorderLayout.NORTH);
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        totalCustomersLabel = new JLabel("Total No. of Customers: " + totalCustomers + "               ");
+        topPanel.add(totalCustomersLabel);
+        totalEarningsLabel = new JLabel("Total Earnings: $" + totalEarnings);
+        topPanel.add(totalEarningsLabel);
+        orderPanel.add(topPanel, BorderLayout.NORTH);
+        orderPanel.add(new JLabel("Orders: "), BorderLayout.WEST);
         orderPanel.add(orderScrollPane, BorderLayout.CENTER);
 
-        // Add buttons for total and print receipt
         JButton totalButton = new JButton("Total");
         totalButton.addActionListener(new ActionListener() {
             @Override
@@ -90,16 +103,16 @@ public class RestaurantManagementSystem extends JFrame {
                 printReceipt();
             }
         });
+
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                orderTextArea.setText(""); // Clear the order text area
-                clearQuantityFields(); // Clear the quantity fields
-                orderedProducts.clear(); // Clear the ordered products list
+                orderTextArea.setText(""); // Clear The Order Text Area
+                clearQuantityFields(); // Clear The Quantity Fields
+                orderedProducts.clear(); // Clear The Ordered Products List
             }
         });
-        
 
         JPanel orderButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         orderButtonPanel.add(totalButton);
@@ -107,16 +120,14 @@ public class RestaurantManagementSystem extends JFrame {
         orderButtonPanel.add(resetButton);
         orderPanel.add(orderButtonPanel, BorderLayout.SOUTH);
 
-        // Total earnings label
-        totalEarningsLabel = new JLabel("Total  Day Earnings: Rs." + totalEarnings);
-        totalEarningsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        orderPanel.add(totalEarningsLabel, BorderLayout.NORTH);
+        // Create a container panel for product and order panels
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(productScrollPane, BorderLayout.CENTER);
+        mainPanel.add(orderPanel, BorderLayout.EAST);
 
-        getContentPane().add(productScrollPane, BorderLayout.CENTER);
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        getContentPane().add(orderPanel, BorderLayout.EAST);
 
-        // Add predefined items
         addPredefinedItems();
 
         setVisible(true);
@@ -125,21 +136,23 @@ public class RestaurantManagementSystem extends JFrame {
     // Method to add predefined items to the product panel
     private void addPredefinedItems() {
         // Add your predefined items here
-        products.add(new Product(" Aloo Tikki Burger", 99, "images/AlooTikkiBurger.jpg"));
-        products.add(new Product("Margherita Pizza regular", 99, "images/margheritaPizza.jpg"));
-        products.add(new Product("Paneer Tikka Salad", 50, "images/PaneerTikkaSalad.jpg"));
-        products.add(new Product(" Creamy Tamato Pasta", 120, "images/creamytomatopasta.jpg"));
-        products.add(new Product(" Tosted cheese Sandwich", 70, "images/Tostedsandwich.jfif"));
-        products.add(new Product(" Peri Peri Fries", 80, "images/periperifries.webp"));
-        products.add(new Product(" Coco Cola", 50, "images/cococola.webp"));
-        products.add(new Product("Cheese Dominator Pizza ", 319, "images/dominatorpizza.jfif"));
+        products.add(new Product("Burger", 5.99, "AlooTikkiBurger.jpg"));
+        products.add(new Product("Pizza", 8.99, "1.png"));
+        products.add(new Product("Salad", 4.99, "1.png"));
+        products.add(new Product("Pasta", 7.99, "1.png"));
+        products.add(new Product("Sandwich", 6.99, "1.png"));
+        products.add(new Product("Fries", 2.99, "1.png"));
+        products.add(new Product("Soda", 1.99, "1.png"));
+
         // Update the product list
         updateProductList();
     }
 
     private void addProduct() {
         String name = JOptionPane.showInputDialog("Enter product name:");
-        if (name == null || name.isEmpty()) return; // Cancel or empty name, do nothing
+        if (name == null || name.isEmpty()) {
+            return; // Cancel or empty name, do nothing
+        }
         double price = 0.0;
         try {
             price = Double.parseDouble(JOptionPane.showInputDialog("Enter product price:"));
@@ -150,7 +163,7 @@ public class RestaurantManagementSystem extends JFrame {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select Product Image");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "png", "gif", "jpeg","jfif","webp");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "png", "gif", "jpeg", "webp","jfif");
         fileChooser.setFileFilter(filter);
         int returnValue = fileChooser.showOpenDialog(this);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -192,21 +205,21 @@ public class RestaurantManagementSystem extends JFrame {
 
     private void updateProductList(List<Product> productList) {
         productPanel.removeAll(); // Clear the product panel
-    
+
         int columns = 4; // Number of columns in the grid layout
         int rows = (int) Math.ceil((double) productList.size() / columns); // Calculate number of rows needed
-    
+
         productPanel.setLayout(new GridLayout(rows, columns)); // Set the layout to a grid with calculated rows and columns
-    
+
         for (Product product : productList) {
             ImageIcon imageIcon = new ImageIcon(product.getImagePath());
             Image image = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            JLabel productLabel = new JLabel("<html><center>" + product.getName() + "<br>Rs." + product.getPrice() + "</center></html>", JLabel.CENTER);
+            JLabel productLabel = new JLabel("<html><center>" + product.getName() + "<br>Rs" + product.getPrice() + "</center></html>", JLabel.CENTER);
             JLabel imageLabel = new JLabel(new ImageIcon(image), JLabel.CENTER); // Center the image
             JLabel quantityLabel = new JLabel("Quantity:");
-            JTextField quantityField = new JTextField(3);
+            JTextField quantityField = new JTextField(5);
             JButton purchaseButton = new JButton("Purchase");
-    
+
             JPanel productPanelItem = new JPanel(new BorderLayout()) {
                 @Override
                 protected void paintComponent(Graphics g) {
@@ -215,20 +228,23 @@ public class RestaurantManagementSystem extends JFrame {
                     g.fillRect(0, 0, getWidth(), getHeight()); // Fill the entire component with black
                 }
             };
-    
+
             JPanel productInfoPanel = new JPanel(new GridLayout(3, 1));
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Center the button panel
-    
+
             buttonPanel.add(quantityLabel);
             buttonPanel.add(quantityField);
             buttonPanel.add(purchaseButton);
-    
+
             productInfoPanel.add(imageLabel); // Add the image label
             productInfoPanel.add(productLabel);
             productInfoPanel.add(buttonPanel);
-    
+
             productPanelItem.add(productInfoPanel, BorderLayout.CENTER); // Center the product info panel within the bordered frame
-    
+
+            // Adjust the insets to reduce padding
+            productInfoPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Add padding around the product info panel
+
             purchaseButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -241,20 +257,20 @@ public class RestaurantManagementSystem extends JFrame {
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "Invalid quantity! Please enter a valid number.");
                     }
-    
+
                 }
             });
-    
+
             // Add a border to the product panel item without any space inside
             productPanelItem.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Zero thickness line border
             productPanel.add(productPanelItem); // Add the product panel item to the product panel
         }
-    
+
         revalidate(); // Revalidate the layout
         repaint(); // Repaint the UI
     }
-    
-    
+
+
     private void updateOrderTextArea() {
         StringBuilder sb = new StringBuilder();
         // Create a temporary list to keep track of processed products
@@ -287,10 +303,13 @@ public class RestaurantManagementSystem extends JFrame {
             totalAmount += product.getPrice();
         }
         // Append the total amount to the orderTextArea
-        orderTextArea.append("\nTotal Amount: RS." + totalAmount);
+        orderTextArea.append("\nTotal Amount: Rs" + totalAmount);
         // Update total earnings
         totalEarnings += totalAmount;
-        totalEarningsLabel.setText("Total Earnings: Rs." + totalEarnings);
+        totalEarningsLabel.setText("Total Earnings: Rs" + totalEarnings);
+        // Update total number of customers
+        totalCustomers++;
+        totalCustomersLabel.setText("Total No. of Customers: " + totalCustomers);
     }
 
     private void printReceipt() {
@@ -300,6 +319,7 @@ public class RestaurantManagementSystem extends JFrame {
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
         String receiptContent = "Customer ID: " + customerId + "\n \nCustomer Name: " + customerName + "\n \nDate: " + date + "\n \nTime: " + time + "\n\n\nOrder:\n" + orderTextArea.getText();
+
         JFileChooser fileChooser = new JFileChooser();
         int saveOption = fileChooser.showSaveDialog(this);
         if (saveOption == JFileChooser.APPROVE_OPTION) {
