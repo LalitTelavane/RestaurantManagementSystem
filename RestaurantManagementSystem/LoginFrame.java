@@ -18,7 +18,7 @@ public class LoginFrame extends JFrame {
 
         // Image panel with "Admin" label
         JPanel imagePanel = new JPanel(new BorderLayout());
-        ImageIcon adminIcon = new ImageIcon("2.jpg"); // Replace "admin.png" with your image file path
+        ImageIcon adminIcon = new ImageIcon("images/login.jpg"); // Replace "admin.png" with your image file path
         Image scaledImage = adminIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH); // Set image size to 200 pixels
         JLabel adminImageLabel = new JLabel(new ImageIcon(scaledImage), SwingConstants.CENTER);
         JLabel adminLabel = new JLabel("Admin", SwingConstants.CENTER);

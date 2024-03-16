@@ -82,7 +82,7 @@ public class RestaurantManagementSystem extends JFrame {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         totalCustomersLabel = new JLabel("Total No. of Customers: " + totalCustomers + "               ");
         topPanel.add(totalCustomersLabel);
-        totalEarningsLabel = new JLabel("Total Earnings: $" + totalEarnings);
+        totalEarningsLabel = new JLabel("Total Earnings: Rs." + totalEarnings);
         topPanel.add(totalEarningsLabel);
         orderPanel.add(topPanel, BorderLayout.NORTH);
         orderPanel.add(new JLabel("Orders: "), BorderLayout.WEST);
@@ -136,13 +136,14 @@ public class RestaurantManagementSystem extends JFrame {
     // Method to add predefined items to the product panel
     private void addPredefinedItems() {
         // Add your predefined items here
-        products.add(new Product("Burger", 5.99, "AlooTikkiBurger.jpg"));
-        products.add(new Product("Pizza", 8.99, "1.png"));
-        products.add(new Product("Salad", 4.99, "1.png"));
-        products.add(new Product("Pasta", 7.99, "1.png"));
-        products.add(new Product("Sandwich", 6.99, "1.png"));
-        products.add(new Product("Fries", 2.99, "1.png"));
-        products.add(new Product("Soda", 1.99, "1.png"));
+        products.add(new Product(" Aloo Tikki Burger", 99, "images/AlooTikkiBurger.jpg"));
+        products.add(new Product(" Dominator Pizza", 99, "images/dominatorpizza.jfif"));
+        products.add(new Product(" Panner Tikka Salad", 60, "images/PaneerTikkaSalad.jpg"));
+        products.add(new Product(" Creamy Tamato Pasta", 99, "images/creamytomatopasta.jpg"));
+        products.add(new Product(" Tosted Sandwich", 50, "images/Tostedsandwich.jfif"));
+        products.add(new Product("Masala Dosa", 50, "images/masaladosa.jfif"));
+        products.add(new Product("Samosa", 12, "images/samosa.jfif"));
+        products.add(new Product("Vada Pav", 15, "images/vadapav.jfif"));
 
         // Update the product list
         updateProductList();
@@ -214,7 +215,7 @@ public class RestaurantManagementSystem extends JFrame {
         for (Product product : productList) {
             ImageIcon imageIcon = new ImageIcon(product.getImagePath());
             Image image = imageIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            JLabel productLabel = new JLabel("<html><center>" + product.getName() + "<br>Rs" + product.getPrice() + "</center></html>", JLabel.CENTER);
+            JLabel productLabel = new JLabel("<html><center>" + product.getName() + "<br>Rs." + product.getPrice() + "</center></html>", JLabel.CENTER);
             JLabel imageLabel = new JLabel(new ImageIcon(image), JLabel.CENTER); // Center the image
             JLabel quantityLabel = new JLabel("Quantity:");
             JTextField quantityField = new JTextField(5);
@@ -303,10 +304,10 @@ public class RestaurantManagementSystem extends JFrame {
             totalAmount += product.getPrice();
         }
         // Append the total amount to the orderTextArea
-        orderTextArea.append("\nTotal Amount: Rs" + totalAmount);
+        orderTextArea.append("\nTotal Amount: Rs." + totalAmount);
         // Update total earnings
         totalEarnings += totalAmount;
-        totalEarningsLabel.setText("Total Earnings: Rs" + totalEarnings);
+        totalEarningsLabel.setText("Total Earnings: Rs." + totalEarnings);
         // Update total number of customers
         totalCustomers++;
         totalCustomersLabel.setText("Total No. of Customers: " + totalCustomers);
