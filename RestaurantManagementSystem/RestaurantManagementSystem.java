@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 public class RestaurantManagementSystem extends JFrame {
     private List<Product> products;
     private List<Product> orderedProducts;
@@ -219,6 +220,7 @@ public class RestaurantManagementSystem extends JFrame {
     private void updateProductList(List<Product> productList) {
         productPanel.removeAll(); // Clear the product panel
 
+        
         int columns = 4; // Number of columns in the grid layout
         int rows = (int) Math.ceil((double) productList.size() / columns); // Calculate number of rows needed
 
@@ -231,25 +233,32 @@ public class RestaurantManagementSystem extends JFrame {
             JLabel imageLabel = new JLabel(new ImageIcon(image), JLabel.CENTER); // Center the image
             JLabel quantityLabel = new JLabel("Quantity:");
             JTextField quantityField = new JTextField(5);
+            // Create a panel to hold the purchase button
             JButton purchaseButton = new JButton("Purchase");
             purchaseButton.setFocusable(false);
-        
-
             JPanel productPanelItem = new JPanel(new BorderLayout());
 
-            JPanel productInfoPanel = new JPanel(new GridLayout(3, 1));
+            JPanel productInfoPanel = new JPanel();
+            productInfoPanel.setLayout(new BoxLayout(productInfoPanel, BoxLayout.Y_AXIS)); // Set BoxLayout for vertical arrangement
+    
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Center the button panel
-
+    
             buttonPanel.add(quantityLabel);
             buttonPanel.add(quantityField);
             buttonPanel.add(purchaseButton);
 
+            // Center align components horizontally within productInfoPanel
+            imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            productLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
             productInfoPanel.add(imageLabel); // Add the image label
             productInfoPanel.add(productLabel);
-            productInfoPanel.add(buttonPanel);
-
+            productInfoPanel.add(buttonPanel); // Add the button panel with quantity components
+    
             productPanelItem.add(productInfoPanel, BorderLayout.CENTER); // Center the product info panel within the bordered frame
-
+       //     productPanelItem.add(purchaseButton, BorderLayout.SOUTH); // Add the purchase button below the product info panel
+    
             purchaseButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -257,23 +266,24 @@ public class RestaurantManagementSystem extends JFrame {
                         int quantity = Integer.parseInt(quantityField.getText());
                         for (int i = 0; i < quantity; i++) {
                             orderedProducts.add(product);
-                            }
-                        updateOrderTextArea();
-                        } 
-                    catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null, "Invalid quantity! Please enter a valid number.");
                         }
+                        updateOrderTextArea();
                     }
-                });
-
+                     catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid quantity! Please enter a valid number.");
+                    }
+                }
+            });
+             // Decrease the width of the purchase button
+           purchaseButton.setPreferredSize(new Dimension(100, 30));
             // Add a border to the product panel item without any space inside
             productPanelItem.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Zero thickness line border
             productPanel.add(productPanelItem); // Add the product panel item to the product panel
-            }
-
+        }
+    
         revalidate(); // Revalidate the layout
         repaint(); // Repaint the UI
-        }
+    }
     
     private void updateOrderTextArea() {
         StringBuilder sb = new StringBuilder();
