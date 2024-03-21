@@ -2,17 +2,15 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class RestaurantManagementSystem extends JFrame {
-    private List<Product> products;
-    private List<Product> orderedProducts;
+    private ArrayList<Product> products;
+    private ArrayList<Product> orderedProducts;
     private JTextField searchField; // Search Bar
     private JTextArea orderTextArea; //Order TextArea
     private JLabel totalEarningsLabel; // Total earnings label
@@ -20,6 +18,7 @@ public class RestaurantManagementSystem extends JFrame {
     private JLabel totalCustomersLabel; // Total number of customers label
     private int totalCustomers; // Total number of customers
     private JPanel productPanel; // Product panel to display products
+    private int customerIdCounter = 1;
 
     public RestaurantManagementSystem() {
         super("Restaurant Management System");
@@ -34,15 +33,18 @@ public class RestaurantManagementSystem extends JFrame {
         setLayout(new BorderLayout());
 
         productPanel = new JPanel(new GridLayout(0, 3)); // Initialize the product panel
+        productPanel.setBackground(Color.LIGHT_GRAY);
 
         JScrollPane productScrollPane = new JScrollPane(productPanel);
 
         // Modify font size for the title or header
         JLabel titleLabel = new JLabel("BVP Snacks Corner:");
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 550, 0, 0));
+
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Change font size to 24
         productScrollPane.setColumnHeaderView(titleLabel);
 
-        searchField = new JTextField(20); // Search bar with a width of 15 columns
+        searchField = new JTextField(20); // Search bar with a width of 20 columns
         searchField.setPreferredSize(new Dimension(90, 30)); // Set search bar size
         searchField.addActionListener(new ActionListener() {
             @Override
@@ -83,7 +85,7 @@ public class RestaurantManagementSystem extends JFrame {
         orderTextArea.setEditable(false);
         JScrollPane orderScrollPane = new JScrollPane(orderTextArea);
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        totalCustomersLabel = new JLabel("Total No. of Customers: " + totalCustomers + "               ");
+        totalCustomersLabel = new JLabel("Total No. of Customers: " + totalCustomers + "       \t\t\t\t");
         topPanel.add(totalCustomersLabel);
 
         totalEarningsLabel = new JLabel("Total Earnings: Rs." + totalEarnings);
@@ -120,7 +122,7 @@ public class RestaurantManagementSystem extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 orderTextArea.setText(""); // Clear The Order Text Area
-                clearQuantityFields(); // Clear The Quantity Fields
+                clearQuantityFields(productPanel); // Clear The Quantity Fields
                 orderedProducts.clear(); // Clear The Ordered Products List
                 }
             });
@@ -136,7 +138,8 @@ public class RestaurantManagementSystem extends JFrame {
         mainPanel.add(productScrollPane, BorderLayout.CENTER);
         mainPanel.add(orderPanel, BorderLayout.EAST);
 
-        getContentPane().add(mainPanel, BorderLayout.CENTER);
+        getContentPane().add(mainPanel,BorderLayout.CENTER);  //getContentPane() is a swing method used to retrieve the content pane of JFrame
+
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 
         addPredefinedItems();
@@ -151,26 +154,34 @@ public class RestaurantManagementSystem extends JFrame {
         products.add(new Product("Idli", 40, "images/Idli.jfif"));
         products.add(new Product("Samosa", 12, "images/samosa.jfif"));
         products.add(new Product("Vada Pav", 15, "images/vadapav.jfif"));
-        products.add(new Product(" Aloo Tikki Burger", 99, "images/AlooTikkiBurger.jpg"));
-        products.add(new Product(" Dominator Pizza", 99, "images/dominatorpizza.jfif"));
-        products.add(new Product(" Panner Tikka Salad", 60, "images/PaneerTikkaSalad.jpg"));
-        products.add(new Product(" Tosted Sandwich", 50, "images/Tostedsandwich.jfif"));
-        products.add(new Product(" Creamy Tamato Pasta", 99, "images/creamytomatopasta.jpg"));
-        products.add(new Product("Coco Cola ", 20, "images/cococola.jfif"));
-        products.add(new Product("Soft Drinks ", 40, "images/softdrinks1.jfif"));
+        products.add(new Product("Misal Pav", 60, "images/MisalPav.jpg"));
+        products.add(new Product("Chole Bhature", 80, "images/CholeBhature.jpeg"));
+        products.add(new Product("Tawa Pulao", 90, "images/TawaPulao.jpeg"));
+        products.add(new Product("Veg Thali", 100, "images/VegThali.jpeg"));
+        products.add(new Product("Aloo Tikki Burger", 99, "images/AlooTikkiBurger.jpg"));
+        products.add(new Product("Dominator Pizza", 99, "images/dominatorpizza.jfif"));
+        products.add(new Product("Panner Tikka Salad", 60, "images/PaneerTikkaSalad.jpg"));
+        products.add(new Product("Creamy Tamato Pasta", 99, "images/creamytomatopasta.jpg"));
+        products.add(new Product("Coco Cola", 20, "images/cococola.jfif"));
+        products.add(new Product("Butter Milk", 20, "images/ButterMilk.jpeg"));
+        products.add(new Product("Water Bottle ", 20, "images/WaterBottle.jpeg"));
+
         // Update the product list
         updateProductList();
     }
 
     private void addProduct() {
         String name = JOptionPane.showInputDialog("Enter product name:");
+ //pop up JOptionPane
+
         if (name == null || name.isEmpty()) {
             return; // Cancel or empty name, do nothing
         }
         double price = 0.0;
         try {
             price = Double.parseDouble(JOptionPane.showInputDialog("Enter product price:"));
-        } catch (NumberFormatException e) {
+        }
+       catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Invalid price! Please enter a valid number.");
             return;
         }
@@ -192,7 +203,12 @@ public class RestaurantManagementSystem extends JFrame {
     }
 
     private void deleteProduct() {
-        String[] options = products.stream().map(Product::getName).toArray(String[]::new);
+                 
+            List<String> optionList = new ArrayList<>();   // Create an array of options containing the names of all products
+            for (Product product : products) {
+                optionList.add(product.getName());
+            }
+            String[] options = optionList.toArray(new String[0]); //converting arraylist into string
         String selectedProduct = (String) JOptionPane.showInputDialog(null,
                 "Select a product to delete:", "Delete Product",
                 JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -204,7 +220,7 @@ public class RestaurantManagementSystem extends JFrame {
     }
 
     private void filterProducts(String query) {
-        List<Product> filteredProducts = new ArrayList<>();
+       ArrayList<Product> filteredProducts = new ArrayList<>();
         for (Product product : products) {
             if (product.getName().toLowerCase().contains(query.toLowerCase())) {
                 filteredProducts.add(product);
@@ -217,12 +233,12 @@ public class RestaurantManagementSystem extends JFrame {
         updateProductList(products);
     }
 
-    private void updateProductList(List<Product> productList) {
+    private void updateProductList(ArrayList<Product> productList) {
         productPanel.removeAll(); // Clear the product panel
 
         
         int columns = 4; // Number of columns in the grid layout
-        int rows = (int) Math.ceil((double) productList.size() / columns); // Calculate number of rows needed
+        int rows = (productList.size()+ columns - 1) / columns; // Calculate number of rows needed
 
         productPanel.setLayout(new GridLayout(rows, columns)); // Set the layout to a grid with calculated rows and columns
 
@@ -268,27 +284,28 @@ public class RestaurantManagementSystem extends JFrame {
                             orderedProducts.add(product);
                         }
                         updateOrderTextArea();
+                        
                     }
                      catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "Invalid quantity! Please enter a valid number.");
                     }
                 }
             });
+            
              // Decrease the width of the purchase button
            purchaseButton.setPreferredSize(new Dimension(100, 30));
-            // Add a border to the product panel item without any space inside
-            productPanelItem.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Zero thickness line border
+            productPanelItem.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));    // Add a border to the product panel without any space inside
             productPanel.add(productPanelItem); // Add the product panel item to the product panel
         }
     
         revalidate(); // Revalidate the layout
-        repaint(); // Repaint the UI
+        repaint();// repaint() is like telling Swing to redraw or refresh a component on the screen.
     }
     
     private void updateOrderTextArea() {
         StringBuilder sb = new StringBuilder();
-        // Create a temporary list to keep track of processed products
-        List<Product> processedProducts = new ArrayList<>();
+        ArrayList<Product> processedProducts = new ArrayList<>();
+// Create a temporary list to keep track of processed products
         for (Product product : orderedProducts) {
             // Check if the product has been processed already
             if (!processedProducts.contains(product)) {
@@ -316,8 +333,12 @@ public class RestaurantManagementSystem extends JFrame {
         for (Product product : orderedProducts) {
             totalAmount += product.getPrice();
             }
-        // Append the total amount to the orderTextArea
-        orderTextArea.append("\nTotal Amount: Rs." + totalAmount);
+        
+        //orderTextArea.append("\nTotal Amount: Rs." + totalAmount);      // Append the total amount to the orderTextArea
+        String currentText = orderTextArea.getText();
+        String newText = currentText + "\nTotal Amount: Rs." + totalAmount;
+        orderTextArea.setText(newText);
+
         // Update total earnings
         totalEarnings += totalAmount;
         totalEarningsLabel.setText("Total Earnings: Rs." + totalEarnings);
@@ -327,51 +348,36 @@ public class RestaurantManagementSystem extends JFrame {
         }
 
     private void printReceipt() {
-        String customerId = JOptionPane.showInputDialog("Enter Customer ID:");
+        int customerId = customerIdCounter ++;
         String customerName = JOptionPane.showInputDialog("Enter Customer Name:");
         String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
-        String receiptContent = "BVP Snacks Corner\n" + "\n\nDate: " + date + "     Time: " + time + "\n\nCustomer ID: " + customerId + "\nCustomer Name: " + customerName +  "\n\n\nOrder:\n" + orderTextArea.getText() + "\n\n\n Thanks For Coming" + "\n Visit Again";
+        String receiptContent = "BVP Snacks Corner\n"+ "\n\nDate: " + date + "     Time: " + time + "\n\nCustomer ID: " + customerId + "\nCustomer Name: " + customerName +  "\n\n\nOrder:\n" + orderTextArea.getText() + "\n\n\n Thanks For Coming" + "\n Visit Again";
 
-        JFileChooser fileChooser = new JFileChooser();
-        int saveOption = fileChooser.showSaveDialog(this);
-        if (saveOption == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(receiptContent);
-                JOptionPane.showMessageDialog(this, "Receipt saved successfully!");
-                } 
-            catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Error occurred while saving the receipt.");
+            // Print the receipt content directly
+            try {
+                orderTextArea.setText(receiptContent); // Set the text of the JTextArea to the receipt content
+                orderTextArea.print(); // Print the content of the JTextArea
+                JOptionPane.showMessageDialog(this, "Receipt printed successfully!");
+                orderTextArea.setText("Previous Order: \n\n" + receiptContent);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error occurred while printing the receipt.");
+            }
+        }
+        
+    private void clearQuantityFields(Container container) { 
+            Component[] components = container.getComponents(); // It retrieves all the components contained within the given container.
+            for (Component component : components) { // It iterates over each component found within the container.
+                if (component instanceof JTextField) { // Check if the component is a JTextField
+                    JTextField quantityField = (JTextField) component; // Cast the component to a JTextField
+                    quantityField.setText(""); // Clear the text of the quantity field
+                } else if (component instanceof Container) { // Check if the component is a container (like a JPanel)
+                    clearQuantityFields((Container) component); //If the component is a container,it might contain other components. we call the clearQuantityFields method recursively for each component inside this container. This is done to ensure that all nested components are checked and cleared if they are quantity fields.
                 }
             }
         }
-
-    private void clearQuantityFields() {
-        Component[] components = productPanel.getComponents();
-        for (Component component : components) {
-            if (component instanceof JPanel) {
-                JPanel productPanelItem = (JPanel) component;
-                for (Component innerComponent : productPanelItem.getComponents()) {
-                    if (innerComponent instanceof JPanel) {
-                        JPanel productInfoPanel = (JPanel) innerComponent;
-                        for (Component buttonPanelComponent : productInfoPanel.getComponents()) {
-                            if (buttonPanelComponent instanceof JPanel) {
-                                JPanel buttonPanel = (JPanel) buttonPanelComponent;
-                                for (Component field : buttonPanel.getComponents()) {
-                                    if (field instanceof JTextField) {
-                                        JTextField quantityField = (JTextField) field;
-                                        quantityField.setText(""); // Clear the quantity field
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -406,3 +412,4 @@ class Product {
         return imagePath;
     }
 }
+
