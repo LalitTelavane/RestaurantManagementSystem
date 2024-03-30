@@ -126,11 +126,21 @@ public class RestaurantManagementSystem extends JFrame {
                 orderedProducts.clear(); // Clear The Ordered Products List
                 }
             });
-
+            JButton LogoutButton= new JButton("Logout");
+            LogoutButton.setFocusable(false);
+            LogoutButton.setPreferredSize(new Dimension(100, 30));
+            LogoutButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                     dispose();
+                     new LoginFrame(); 
+                    }
+                });
         JPanel orderButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         orderButtonPanel.add(totalButton);
         orderButtonPanel.add(printReceiptButton);
         orderButtonPanel.add(resetButton);
+        orderButtonPanel.add(LogoutButton);
         orderPanel.add(orderButtonPanel, BorderLayout.SOUTH);
 
         // Create a container panel for product and order panels
